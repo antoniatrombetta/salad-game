@@ -17,7 +17,7 @@ body {
     height: 600px;
     outline: 5px solid rgb(191, 182, 120);
     background-color: rgba(255, 255, 255, 0.7);
-    
+    overflow: hidden;
 }
 
 #elaine{
@@ -30,11 +30,23 @@ body {
     width: 100%;
 }
 
-.obstacle{
+.obstacleSalad{
     position: absolute;
 }
 
-.obstacle{
+.obstacleSalad img{
     height: 100% ;
     width: 100%;
 }
+
+#george{
+    position: absolute;
+    bottom: 0;
+    
+}
+
+#george img{
+    height: 100%;
+    width: 100%;
+}
+

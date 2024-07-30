@@ -2,16 +2,50 @@
 
 class Player {
     constructor() {
-        this.width = 120;
+        this.width = 100;
         this.height = this.width * 2.12;
         this.positionX = 60;
-        this.positionY = 0;
-
+        this.positionY = 600 - this.height;
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.accelerationX = 0;
+        this.accelerationY = 0.5;
+        this.jumpForce = -20;
+        this.isOnGround = true;
+        
 
         this.createDomelement();
-        // window.addEventListener('resize', () => this.adjustSize());
-        // this.adjustSize();
+        
 
+    }
+
+    updateVelocity(){
+        if(!this.isOnGround){
+            this.velocityY += this.accelerationY;
+        }
+        
+        this.positionY += this.velocityY;
+        this.positionX += this.velocityX;
+
+        if(this.positionY >= 600 - this.height){
+            this.positionY = 600 - this.height;
+            this.velocityY = 0;
+            this.isOnGround= true;
+
+            if(this.positionX < 0){
+                this.positionX = 0;
+            }else if (this.positionX > 800 - this.width) {
+                this.positionX = 800 - this.width; 
+            }
+        }
+        this.elainePlayer.style.transform = `translate(${this.positionX}px, ${this.positionY}px)`;
+    }
+
+    jump(){
+        if(this.isOnGround){
+            this.velocityY = this.jumpForce;
+            this.isOnGround = false;
+        }
     }
 
     createDomelement() {
@@ -23,7 +57,7 @@ class Player {
         this.elainePlayer.style.bottom = this.positionY + "px";
         this.elainePlayer.style.width = this.width + "px";
         this.elainePlayer.style.height = this.height + "px";
-
+        this.elainePlayer.style.position = "absolute";
 
         const board = document.getElementById("board");
         board.appendChild(this.elainePlayer);
@@ -31,38 +65,45 @@ class Player {
         this.newImg.setAttribute("src", "./img/elaineC.png");
         this.elainePlayer.appendChild(this.newImg);
 
+        this.updatePosition();
+
     }
 
+    updatePosition(){
+        this.elainePlayer.style.transform = `translate(${this.positionX}px, ${this.positionY}px)`;
+    }
 
     moveLeft() {
-        this.positionX--;
-        this.elainePlayer.style.left = this.positionX + "px";
+        this.positionX -= 5;
+        this.updatePosition();
 
     }
 
     moveRight() {
-        this.positionX++;
-        this.elainePlayer.style.left = this.positionX + "px";
+        this.positionX += 5;
+        this.updatePosition();
     }
 
     moveUp() {
-        this.positionY++;
-        this.elainePlayer.style.bottom = this.positionY + "px";
+        this.positionY += 5;
+        this.updatePosition();
     }
 
     moveDown() {
-        this.positionY--;
-        this.elainePlayer.style.bottom = this.positionY + "px";
+        this.positionY -= 5;
+        this.updatePosition();
     }
 }
 
 class Obstacle {
 
     constructor() {
-        this.width = 5;
-        this.height = this.width * 2.12;
-        this.width = 10;
-        this.height = 5;
+        this.width = 45;
+        this.height = this.width * 1.12;
+        this.positionX = Math.floor(Math.random() * (800 - this.width + 1));
+        this.positionY = 500;
+        
+        
         this.createDomelement();
     }
     createDomelement() {
@@ -88,20 +129,100 @@ class Obstacle {
     }
 }
 
+class George {
+    constructor (){
+        this.width = 100;
+        this.height = this.width * 2.12;
+        this.positionX = 800;
+        this.positionY = 0;
+
+
+        this.createDomelement();
+    }
+
+    createDomelement() {
+
+        this.georgeObstacle = document.createElement("div");
+        this.georgeObstacle.id = "george";
+
+        this.georgeObstacle.style.left = this.positionX + "px";
+        this.georgeObstacle.style.bottom = this.positionY + "px";
+        this.georgeObstacle.style.width = this.width + "px";
+        this.georgeObstacle.style.height = this.height + "px";
+
+
+        const board = document.getElementById("board");
+        board.appendChild(this.georgeObstacle);
+        this.newImg3 = document.createElement("img");
+        this.newImg3.setAttribute("src", "./img/george.png");
+        this.georgeObstacle.appendChild(this.newImg3);
+
+    }
+    moveLeft() {
+        this.positionX -= 5;
+        this.georgeObstacle.style.left = this.positionX + "px";
+
+    }
+   
+}
+
 const myPlayer = new Player();
 const obstacle = [];
+const georgeArr = [];
+let score = 0;
+
+function gameLoop(){
+    myPlayer.updateVelocity();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+function updateScore() {
+    score++;
+    document.querySelector('.score').textContent = "score:" + score; 
+}
 
 setInterval(() => {
     const newObstacle = new Obstacle();
     obstacle.push(newObstacle);
 }, 3000);
 
+
 setInterval(() => {
     obstacle.forEach((obstacleInstance) => {
         obstacleInstance.moveDown();
+        if(
+            myPlayer.positionX < obstacleInstance.positionX + obstacleInstance.width &&
+            myPlayer.positionX + myPlayer.width > obstacleInstance.positionX &&
+            myPlayer.positionY < obstacleInstance.positionY + obstacleInstance.height &&
+            myPlayer.positionY + myPlayer.height > obstacleInstance.positionY
+        ){
+          updateScore();
+          obstacleInstance.saladObstacle.remove();
+        }
     })
 }, 50);
 
+setInterval(() => {
+    const georgeObstacle = new George();
+    georgeArr.push(georgeObstacle);
+
+}, 8000);
+
+setInterval(() => {
+    georgeArr.forEach((georgeInstance) => {
+        georgeInstance.moveLeft();
+        if(
+            georgeInstance.positionX < myPlayer.positionX + myPlayer.width &&
+            georgeInstance.positionX + georgeInstance.width > myPlayer.positionX &&
+            georgeInstance.positionY < myPlayer.positionY + myPlayer.height &&
+            georgeInstance.positionY + georgeInstance.height > myPlayer.positionY
+        ){
+            location.href = "gameover.html"; 
+        }
+    })
+}, 50);
 
 
 document.addEventListener("keydown", (e) => {
@@ -111,9 +232,7 @@ document.addEventListener("keydown", (e) => {
         } else if (e.code === 'ArrowRight') {
             myPlayer.moveRight();
         } else if (e.code === 'ArrowUp') {
-            myPlayer.moveUp();
-        } else if (e.code === 'ArrowDown') {
-            myPlayer.moveDown();
-        }
+            myPlayer.jump();
+        } 
     }
 })
