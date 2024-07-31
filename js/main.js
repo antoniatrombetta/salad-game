@@ -5,13 +5,14 @@ class Player {
         this.width = 100;
         this.height = this.width * 2.12;
         this.positionX = 60;
-        this.positionY = 600 - this.height;
+        this.positionY = 0;
         this.velocityX = 0;
         this.velocityY = 0;
         this.accelerationX = 0;
         this.accelerationY = 0.5;
-        this.jumpForce = -20;
+        this.jumpForce = 10;
         this.isOnGround = true;
+        this.isFalling = false;
         
 
         this.createDomelement();
@@ -21,24 +22,26 @@ class Player {
 
     updateVelocity(){
         if(!this.isOnGround){
-            this.velocityY += this.accelerationY;
+            if(this.isFalling){
+                this.velocityY += this.accelerationY * -1;
+            } else {
+                this.velocityY += this.accelerationY;
+            }
         }
         
         this.positionY += this.velocityY;
-        this.positionX += this.velocityX;
 
-        if(this.positionY >= 600 - this.height){
-            this.positionY = 600 - this.height;
+        if(this.positionY >= 600 - this.height){   
+            this.velocityY = 0;
+            this.isFalling = true;
+        } else if (this.positionY <= 0 ){
             this.velocityY = 0;
             this.isOnGround= true;
-
-            if(this.positionX < 0){
-                this.positionX = 0;
-            }else if (this.positionX > 800 - this.width) {
-                this.positionX = 800 - this.width; 
-            }
+            this.isFalling = false;
         }
-        this.elainePlayer.style.transform = `translate(${this.positionX}px, ${this.positionY}px)`;
+        
+        this.elainePlayer.style.left = this.positionX + "px";
+        this.elainePlayer.style.bottom = this.positionY + "px";
     }
 
     jump(){
@@ -70,7 +73,8 @@ class Player {
     }
 
     updatePosition(){
-        this.elainePlayer.style.transform = `translate(${this.positionX}px, ${this.positionY}px)`;
+        this.elainePlayer.style.left = this.positionX + "px";
+        this.elainePlayer.style.bottom = this.positionY + "px";
     }
 
     moveLeft() {
@@ -186,7 +190,7 @@ function updateScore() {
 setInterval(() => {
     const newObstacle = new Obstacle();
     obstacle.push(newObstacle);
-}, 3000);
+}, 5000);
 
 
 setInterval(() => {
@@ -213,6 +217,7 @@ setInterval(() => {
 setInterval(() => {
     georgeArr.forEach((georgeInstance) => {
         georgeInstance.moveLeft();
+        console.log(`x: ${myPlayer.positionX} ... y ${myPlayer.positionY} `);
         if(
             georgeInstance.positionX < myPlayer.positionX + myPlayer.width &&
             georgeInstance.positionX + georgeInstance.width > myPlayer.positionX &&
