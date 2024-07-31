@@ -1,5 +1,25 @@
+document.addEventListener('DOMContentLoaded', () =>{
+    const startButton = document.getElementById('startButton');
+    const board = document.getElementById('board');
+    const score = document.querySelector('.score');
+    const container = document.querySelector('.container');
+    const image = document.querySelector('.image');
 
+    if(startButton){
+        startButton.addEventListener('click', () =>{
+            image.style.display = 'none';
+            startButton.style.display = 'none';
+            
+            board.style.display = 'block';
+            score.style.display = 'block';
+            container.style.display = 'none';
 
+            startGame();
+        })
+    }
+});
+
+function startGame () {
 class Player {
     constructor() {
         this.width = 100;
@@ -241,3 +261,5 @@ document.addEventListener("keydown", (e) => {
         } 
     }
 })
+
+};
