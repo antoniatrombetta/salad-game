@@ -213,7 +213,7 @@ function updateScore() {
 setInterval(() => {
     const newObstacle = new Obstacle();
     obstacle.push(newObstacle);
-}, 5000);
+}, 4000);
 
 
 setInterval(() => {
