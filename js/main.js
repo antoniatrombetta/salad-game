@@ -1,9 +1,12 @@
+
+
 document.addEventListener('DOMContentLoaded', () =>{
     const startButton = document.getElementById('startButton');
     const board = document.getElementById('board');
     const score = document.querySelector('.score');
-    const container = document.querySelector('.container');
     const image = document.querySelector('.image');
+    const container = document.querySelector('.container');
+    
 
     if(startButton){
         startButton.addEventListener('click', () =>{
@@ -22,22 +25,19 @@ document.addEventListener('DOMContentLoaded', () =>{
 function startGame () {
 class Player {
     constructor() {
-        this.width = 100;
+        this.width = 80;
         this.height = this.width * 2.12;
         this.positionX = 60;
         this.positionY = 0;
         this.velocityX = 0;
         this.velocityY = 0;
         this.accelerationX = 0;
-        this.accelerationY = 0.5;
-        this.jumpForce = 10;
+        this.accelerationY = 0.2;
+        this.jumpForce = 1;
         this.isOnGround = true;
         this.isFalling = false;
-        
 
         this.createDomelement();
-        
-
     }
 
     updateVelocity(){
@@ -51,10 +51,11 @@ class Player {
         
         this.positionY += this.velocityY;
 
-        if(this.positionY >= 600 - this.height){   
+        if(this.positionY >= 600 - this.height - 100){   
             this.velocityY = 0;
             this.isFalling = true;
         } else if (this.positionY <= 0 ){
+            this.positionY = 0;
             this.velocityY = 0;
             this.isOnGround= true;
             this.isFalling = false;
@@ -68,6 +69,7 @@ class Player {
         if(this.isOnGround){
             this.velocityY = this.jumpForce;
             this.isOnGround = false;
+            
         }
     }
 
@@ -155,7 +157,7 @@ class Obstacle {
 
 class George {
     constructor (){
-        this.width = 100;
+        this.width = 80;
         this.height = this.width * 2.12;
         this.positionX = 800;
         this.positionY = 0;
@@ -194,6 +196,7 @@ const myPlayer = new Player();
 const obstacle = [];
 const georgeArr = [];
 let score = 0;
+
 
 function gameLoop(){
     myPlayer.updateVelocity();
