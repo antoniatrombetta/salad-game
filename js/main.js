@@ -176,6 +176,8 @@ class George {
 
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
+    let audio = document.getElementById('audio');
+    audio.play()
     const board = document.getElementById('board');
     const score = document.querySelector('.score');
     const image = document.querySelector('.image');
