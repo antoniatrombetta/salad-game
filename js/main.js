@@ -256,7 +256,7 @@ function startGame() {
                 georgeInstance.positionY < myPlayer.positionY + myPlayer.height &&
                 georgeInstance.positionY + georgeInstance.height > myPlayer.positionY
             ) {
-                //location.href = "gameover.html";
+                location.href = "gameover.html";
 
             }
         })
