@@ -1,28 +1,6 @@
 
 
-document.addEventListener('DOMContentLoaded', () =>{
-    const startButton = document.getElementById('startButton');
-    const board = document.getElementById('board');
-    const score = document.querySelector('.score');
-    const image = document.querySelector('.image');
-    const container = document.querySelector('.container');
-    
 
-    if(startButton){
-        startButton.addEventListener('click', () =>{
-            image.style.display = 'none';
-            startButton.style.display = 'none';
-            
-            board.style.display = 'block';
-            score.style.display = 'block';
-            container.style.display = 'none';
-
-            startGame();
-        })
-    }
-});
-
-function startGame () {
 class Player {
     constructor() {
         this.width = 80;
@@ -32,7 +10,7 @@ class Player {
         this.velocityX = 0;
         this.velocityY = 0;
         this.accelerationX = 0;
-        this.accelerationY = 0.2;
+        this.accelerationY = 0.3;
         this.jumpForce = 1;
         this.isOnGround = true;
         this.isFalling = false;
@@ -40,36 +18,36 @@ class Player {
         this.createDomelement();
     }
 
-    updateVelocity(){
-        if(!this.isOnGround){
-            if(this.isFalling){
+    updateVelocity() {
+        if (!this.isOnGround) {
+            if (this.isFalling) {
                 this.velocityY += this.accelerationY * -1;
             } else {
                 this.velocityY += this.accelerationY;
             }
         }
-        
+
         this.positionY += this.velocityY;
 
-        if(this.positionY >= 600 - this.height - 100){   
+        if (this.positionY >= 600 - this.height - 100) {
             this.velocityY = 0;
             this.isFalling = true;
-        } else if (this.positionY <= 0 ){
+        } else if (this.positionY <= 0) {
             this.positionY = 0;
             this.velocityY = 0;
-            this.isOnGround= true;
+            this.isOnGround = true;
             this.isFalling = false;
         }
-        
+
         this.elainePlayer.style.left = this.positionX + "px";
         this.elainePlayer.style.bottom = this.positionY + "px";
     }
 
-    jump(){
-        if(this.isOnGround){
+    jump() {
+        if (this.isOnGround) {
             this.velocityY = this.jumpForce;
             this.isOnGround = false;
-            
+
         }
     }
 
@@ -94,7 +72,7 @@ class Player {
 
     }
 
-    updatePosition(){
+    updatePosition() {
         this.elainePlayer.style.left = this.positionX + "px";
         this.elainePlayer.style.bottom = this.positionY + "px";
     }
@@ -128,8 +106,9 @@ class Obstacle {
         this.height = this.width * 1.12;
         this.positionX = Math.floor(Math.random() * (800 - this.width + 1));
         this.positionY = 500;
-        
-        
+        this.collided = false;
+
+
         this.createDomelement();
     }
     createDomelement() {
@@ -156,7 +135,7 @@ class Obstacle {
 }
 
 class George {
-    constructor (){
+    constructor() {
         this.width = 80;
         this.height = this.width * 2.12;
         this.positionX = 800;
@@ -185,84 +164,115 @@ class George {
 
     }
     moveLeft() {
-        this.positionX -= 5;
+        this.positionX -= 10;
         this.georgeObstacle.style.left = this.positionX + "px";
 
     }
-   
+
 }
 
-const myPlayer = new Player();
-const obstacle = [];
-const georgeArr = [];
-let score = 0;
 
 
-function gameLoop(){
-    myPlayer.updateVelocity();
-    requestAnimationFrame(gameLoop);
-}
-
-gameLoop();
-
-function updateScore() {
-    score++;
-    document.querySelector('.score').textContent = "score:" + score; 
-}
-
-setInterval(() => {
-    const newObstacle = new Obstacle();
-    obstacle.push(newObstacle);
-}, 4000);
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('startButton');
+    const board = document.getElementById('board');
+    const score = document.querySelector('.score');
+    const image = document.querySelector('.image');
+    const container = document.querySelector('.container');
 
 
-setInterval(() => {
-    obstacle.forEach((obstacleInstance) => {
-        obstacleInstance.moveDown();
-        if(
-            myPlayer.positionX < obstacleInstance.positionX + obstacleInstance.width &&
-            myPlayer.positionX + myPlayer.width > obstacleInstance.positionX &&
-            myPlayer.positionY < obstacleInstance.positionY + obstacleInstance.height &&
-            myPlayer.positionY + myPlayer.height > obstacleInstance.positionY
-        ){
-          updateScore();
-          obstacleInstance.saladObstacle.remove();
-        }
-    })
-}, 50);
+    if (startButton) {
+        startButton.addEventListener('click', () => {
+            image.style.display = 'none';
+            startButton.style.display = 'none';
+            board.style.display = 'block';
+            score.style.display = 'block';
+            container.style.display = 'none';
 
-setInterval(() => {
-    const georgeObstacle = new George();
-    georgeArr.push(georgeObstacle);
-
-}, 8000);
-
-setInterval(() => {
-    georgeArr.forEach((georgeInstance) => {
-        georgeInstance.moveLeft();
-        console.log(`x: ${myPlayer.positionX} ... y ${myPlayer.positionY} `);
-        if(
-            georgeInstance.positionX < myPlayer.positionX + myPlayer.width &&
-            georgeInstance.positionX + georgeInstance.width > myPlayer.positionX &&
-            georgeInstance.positionY < myPlayer.positionY + myPlayer.height &&
-            georgeInstance.positionY + georgeInstance.height > myPlayer.positionY
-        ){
-            location.href = "gameover.html"; 
-        }
-    })
-}, 50);
-
-
-document.addEventListener("keydown", (e) => {
-    if (myPlayer) {
-        if (e.code === 'ArrowLeft') {
-            myPlayer.moveLeft();
-        } else if (e.code === 'ArrowRight') {
-            myPlayer.moveRight();
-        } else if (e.code === 'ArrowUp') {
-            myPlayer.jump();
-        } 
+            startGame();
+        })
     }
-})
+});
+
+
+
+function startGame() {
+    const myPlayer = new Player();
+    const obstacle = [];
+    const georgeArr = [];
+    let score = 0;
+
+
+    function gameLoop() {
+        myPlayer.updateVelocity();
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+
+    function updateScore() {
+        score++;
+        document.querySelector('.score').textContent = "score:" + score;
+    }
+
+    setInterval(() => {
+        const newObstacle = new Obstacle();
+        obstacle.push(newObstacle);
+
+    }, 3000);
+
+ 
+    setInterval(() => {
+        obstacle.forEach((obstacleInstance) => {
+            obstacleInstance.moveDown();
+
+            if (
+                myPlayer.positionX < obstacleInstance.positionX + obstacleInstance.width &&
+                myPlayer.positionX + myPlayer.width > obstacleInstance.positionX &&
+                myPlayer.positionY < obstacleInstance.positionY + obstacleInstance.height &&
+                myPlayer.positionY + myPlayer.height > obstacleInstance.positionY
+            ) { if(!obstacleInstance.collided){
+                updateScore();
+                obstacleInstance.collided = true;
+                obstacleInstance.saladObstacle.remove();
+            }
+                
+            }
+        })
+    }, 50);
+
+    setInterval(() => {
+        const georgeObstacle = new George();
+        georgeArr.push(georgeObstacle);
+
+    }, 8000);
+
+    setInterval(() => {
+        georgeArr.forEach((georgeInstance) => {
+            georgeInstance.moveLeft();
+            if (
+                georgeInstance.positionX < myPlayer.positionX + myPlayer.width &&
+                georgeInstance.positionX + georgeInstance.width > myPlayer.positionX &&
+                georgeInstance.positionY < myPlayer.positionY + myPlayer.height &&
+                georgeInstance.positionY + georgeInstance.height > myPlayer.positionY
+            ) {
+                //location.href = "gameover.html";
+
+            }
+        })
+    }, 50);
+
+
+    document.addEventListener("keydown", (e) => {
+        if (myPlayer) {
+            if (e.code === 'ArrowLeft') {
+                myPlayer.moveLeft();
+            } else if (e.code === 'ArrowRight') {
+                myPlayer.moveRight();
+            } else if (e.code === 'ArrowUp') {
+                myPlayer.jump();
+            }
+        }
+    })
 
 };
